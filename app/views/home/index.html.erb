@@ -1,17 +1,15 @@
 
-<%=require 'net/http'
+<% require 'net/http'
 require 'json'
-
-loc = Net::HTTP.get(URI('https://ipapi.co/json/'))
+ip = request.remote_ip
+loc = Net::HTTP.get(URI("https://ipapi.co/#{ip}/json/"))
 hash = JSON.parse(loc)
 city = hash["city"]
 state = hash["region"]
 lat = hash["latitude"]
 long = hash["longitude"]
-puts nil
 
-%>
-<%= 
+
 #allows google api to get time zone
 Timezone::Lookup.config(:google) do |c|
   c.api_key = "#{Rails.application.credentials.dig(:google_api_key)}"
@@ -79,7 +77,6 @@ def just_day(date_string)
 end
 
 idx = 1
-puts nil
 %>
 
 <% if !user_signed_in? %>
