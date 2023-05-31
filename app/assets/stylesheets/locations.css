@@ -1,0 +1,15 @@
+.columns-color{
+    background-color: rgba(184, 184, 184, 0.527) !important;
+}
+
+.columns-color-main{
+    background-color: rgba(39, 143, 212, 0.658) !important;
+}
+
+.rounded-corners{
+    border-radius: 3px;
+}
+
+.margin-top{
+    margin-top: 4px !important;
+}

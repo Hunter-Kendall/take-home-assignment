@@ -1,0 +1,118 @@
+
+<%=require 'net/http'
+require 'json'
+
+loc = Net::HTTP.get(URI('https://ipapi.co/json/'))
+hash = JSON.parse(loc)
+city = hash["city"]
+state = hash["region"]
+lat = hash["latitude"]
+long = hash["longitude"]
+puts nil
+
+%>
+<%= 
+#allows google api to get time zone
+Timezone::Lookup.config(:google) do |c|
+  c.api_key = "#{Rails.application.credentials.dig(:google_api_key)}"
+  #c.client_id = 'your_google_client_id' # if using 'Google for Work'
+end
+#getting timezone and splitting to go into the weather api query
+timezone = Timezone.lookup(lat, long)
+timezone = timezone.name.split('/', -1)
+
+#weather api query
+loc1 = Net::HTTP.get(URI("https://api.open-meteo.com/v1/forecast?latitude=#{lat}&longitude=#{long}&daily=weathercode,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=#{timezone[0]}%2F#{timezone[1]}"))
+hash1 = JSON.parse(loc1)
+#weather data
+temp_high = hash1['daily']['temperature_2m_max']
+temp_low = hash1['daily']['temperature_2m_min']
+weather_code = hash1['daily']['weathercode']
+date = hash1['daily']['time']
+#for mapping weather codes to their interpretation
+weather_names = {0 => "Clear Sky",
+                 1 => "Mainly Clear",
+                 2 => "Partly Cloudy",
+                 3 => "Overcast",
+                 45 => "Fog",
+                 48 => "Depositing Rime Fog",
+                 51 => "Light Drizzle",
+                 53 => "Moderate Drizzle",
+                 55 => "Dense Drizzle",
+                 56 => "Light Freezing Drizzle",
+                 57 => "Dense Freezing Drizzle",
+                 61 => "Slight Rain",
+                 63 => "Moderate Rain",
+                 65 => "Heavy Rain",
+                 66 => "Light Freezing Rain",
+                 67 => "Heavy Freezing Rain",
+                 71 => "Slight Snowfall",
+                 73 => "Moderate Snowfall",
+                 75 => "Heavy Snowfall",
+                 77 => "Snow Grains",
+                 80 => "Slight Rain Showers",
+                 81 => "Moderate Rain Showers",
+                 82 => "Heavy Rain Showers",
+                 85 => "Slight Snow Showers",
+                 85 => "Heavy Snow Showers",
+                 95 => "Slight to Moderate Thunderstorm",
+                 96 => "Thunderstorm With Slight Hail",
+                 99 => "Thunderstorm With Heavy Hail"
+                }
+
+require 'date'
+
+# Function to calculate the day of the week based on a date
+def calculate_day_of_week(date_string)
+  begin
+    date = Date.parse(date_string)
+    day_of_week = date.strftime('%A')
+    day_of_week
+  rescue ArgumentError
+    puts "Invalid date format. Please provide a valid date (YYYY-MM-DD)."
+  end
+end
+def just_day(date_string)
+  date = Date.parse(date_string)
+  day = date.day
+  day
+end
+
+idx = 1
+puts nil
+%>
+
+<% if !user_signed_in? %>
+  <h6> Sign in to see other locations.</h6>
+<% end %>
+
+<div class="container overflow-hidden">
+  <div class="row gx-1">
+    <div class="col-4  align-self-end">
+      <h1><%= city.to_s + ", " +state.to_s%></h1>
+    </div>
+    <div class="col-8">
+      <div class="p-3 columns-color-main rounded-corners text-center">
+          
+          <div class="row"><div class="col"><h2><%= "#{calculate_day_of_week(date[0])} #{just_day(date[0])}"%></h2></div></div>
+          <div class="row"><div class="col"><%= "Todays Forcast: #{weather_names[weather_code[0]]}"%></div></div>
+          <div class="row"><div class="col"><%= "Expected High: #{temp_high[0]}°F"%></div></div>
+          <div class="row"><div class="col"><%= "Expected Low:#{temp_low[0]}°F"%></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="row gx-1 margin-top text-center">
+    <%until idx == 7 do %>
+      <div class="col">
+        <div class="p-3 columns-color rounded-corners">
+          <div class="row"><div class="col"><strong><%= "#{calculate_day_of_week(date[idx])} #{just_day(date[idx])}"%></strong></div></div>
+          <div class="row"><div class="col"><%= weather_names[weather_code[idx]]%></div></div>
+          <div class="row"><div class="col"><%= "#{temp_high[idx]}°F"%></div></div>
+          <div class="row"><div class="col"><%= "#{temp_low[idx]}°F"%></div></div>
+        </div>
+      </div>
+      <% idx = idx + 1%>
+    <% end %>
+  </div>
+</div>
+
