@@ -3,7 +3,7 @@
 Take home assignment for Craftmanship Academy.
 
 ## Task
-I was given the task of making a Weather Website that can look at multiple locations using ruby on rails. The minimum requirements of this:
+I was given the task of making a weather website that can look at multiple locations using ruby on rails. The minimum requirements of this:
 
 - Create multiple locations by (IP Address and/or text address)
   *   ActiveRecord backed models
