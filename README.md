@@ -2,6 +2,8 @@
 
 Take home assignment for Craftmanship Academy.
 
+Link: https://takehomeassignment.fly.dev/
+
 ## Task
 I was given the task of making a weather website that can look at multiple locations using ruby on rails. The minimum requirements of this:
 
