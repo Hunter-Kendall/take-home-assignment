@@ -3,7 +3,7 @@
 Take home assignment for Craftmanship Academy.
 
 ## Task
-I was given the task of making a Weather Website that can look at multiple locations using ruby on rails. The minimum requirements of this:
+I was given the task of making a weather website that can look at multiple locations using ruby on rails. The minimum requirements of this:
 
 - Create multiple locations by (IP Address and/or text address)
   *   ActiveRecord backed models
@@ -42,7 +42,7 @@ Use Ctrl-C to stop
 
 You did ask that I write some tests, so I did. I did not write tests for the whole program, but I had some basic ones for the locations model and its controller.
 
-I ended up using rspec for testing per your recommendations:
+I used rspec for testing per your recommendation:
 ```
 gem 'rspec-rails', '~> 4.0.1'
 ```
