@@ -1,8 +1,7 @@
 
 <% require 'net/http'
 require 'json'
-ip = request.remote_ip
-loc = Net::HTTP.get(URI("https://ipapi.co/#{ip}/json/"))
+loc = Net::HTTP.get(URI("https://ipapi.co/json/"))
 hash = JSON.parse(loc)
 city = hash["city"]
 state = hash["region"]
@@ -79,7 +78,7 @@ end
 idx = 1
 %>
 
-<h1><%=ip.to_s%></h1>
+
 
 <% if !user_signed_in? %>
   <h6> Sign in to see other locations.</h6>
